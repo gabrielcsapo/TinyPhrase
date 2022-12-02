@@ -15,8 +15,8 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
 typedef struct { 
   uint8_t index;
-  const String menuItemName;
-  const String options[881];
+  char* menuItemName;
+  char options[881][55];
 } MenuOption;
 
 const MenuOption MenuOptions[] PROGMEM {
@@ -44,6 +44,22 @@ long lastGameOption=0;
 long timeSinceLastTick=0;
 long lastPress=0;
 long timeSinceGameStarted=0;
+MenuOption selectedMenuOption;
+
+const char* TypeOf(const bool&)   { static const char type[] = "bool";    return type; }
+const char* TypeOf(const bool*)   { static const char type[] = "bool*";   return type; }
+const char* TypeOf(const char&)   { static const char type[] = "char";    return type; }
+const char* TypeOf(const char*)   { static const char type[] = "char*";   return type; }
+const char* TypeOf(const double&) { static const char type[] = "double";  return type; }
+const char* TypeOf(const double*) { static const char type[] = "double*"; return type; }
+const char* TypeOf(const float&)  { static const char type[] = "float";   return type; }
+const char* TypeOf(const float*)  { static const char type[] = "float*";  return type; }
+const char* TypeOf(const int&)    { static const char type[] = "int";     return type; }
+const char* TypeOf(const int*)    { static const char type[] = "int*";    return type; }
+const char* TypeOf(const String&) { static const char type[] = "String";  return type; }
+const char* TypeOf(const String*) { static const char type[] = "String*"; return type; }
+//const char* const TypeOf(const char[5])    { static const char* type = "char[5]";    return type; }  // Decays to char* so generates compiler redefinition warning.
+const char* const TypeOf(const char(*)[5]) { static const char* type = "char(*)[5]"; return type; }
 
 void tickingSound() {
   tone(BUZZER_PIN, 1000, 5);
@@ -92,7 +108,7 @@ uint8_t getButton(){
   }
 }
 
-void printCenteredText(String text) {
+void printCenteredText(char* text) {
   int16_t x1;
   int16_t y1;
   uint16_t width;
@@ -127,20 +143,20 @@ void round() {
       Serial.println("finishing the round");
       gameState = FINISH_ROUND;
     }
-
-    MenuOption selectedMenuOption;
   
-    // copy to local struct from PROGMEM
-    memcpy_P( &selectedMenuOption, &MenuOptions[lastMenuOption], sizeof( MenuOption));
+    memcpy_P(&selectedMenuOption, &MenuOptions[lastMenuOption], sizeof(selectedMenuOption));
 
     int totalGameOptions = sizeof(selectedMenuOption.options) / sizeof(selectedMenuOption.options[0]);
     Serial.print("Total Game Options: ");
     Serial.println(totalGameOptions);
     Serial.println(lastGameOption);
 
+    Serial.println(selectedMenuOption.options[lastGameOption]);
+
     printCenteredText(selectedMenuOption.options[lastGameOption]);
 
     // TODO: dirty checks for button presses, this should be abstracted to a non-blocking getButton
+    // TODO: we need to be able to check for multiple button presses at the same time
     uint8_t ret=0;
     for(int i = 0; i <= 5; i++){
       if(digitalRead(BUTTON_RIGHT)==LOW){
