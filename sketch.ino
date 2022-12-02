@@ -159,15 +159,23 @@ void round() {
     // TODO: we need to be able to check for multiple button presses at the same time
     uint8_t ret=0;
     for(int i = 0; i <= 5; i++){
-      if(digitalRead(BUTTON_RIGHT)==LOW){
-        ret=BUTTON_RIGHT;      
+      if(digitalRead(BUTTON_LEFT)==LOW){
+        ret=BUTTON_LEFT;
+      }else if(digitalRead(BUTTON_RIGHT)==LOW){
+        ret=BUTTON_RIGHT;
       }
       if(ret!=0){
         if(micros()-lastPress>DEBOUNCE_BUTTON){
-          if((lastGameOption + 1) > totalGameOptions) {
-            lastGameOption = 0;
-          } else {
-            lastGameOption += + 1;
+          if(ret == BUTTON_RIGHT) {
+            if((lastGameOption + 1) > totalGameOptions) {
+              lastGameOption = 0;
+            } else {
+              lastGameOption += + 1;
+            }
+          }
+          
+          if(ret == BUTTON_LEFT) {
+            gameState = PAUSED;
           }
 
           lastPress=micros();
@@ -249,9 +257,21 @@ void loop() {
   switch(gameState) {
     case IN_A_ROUND:
       break;
-    case PAUSED:
+    case PAUSED: {
       Serial.println("PAUSED");
-      break;
+
+      printCenteredText("PAUSED\nPress the right button to continue");
+
+      switch(getButton()) {
+        case BUTTON_RIGHT:
+          // let's get back to the game
+          gameState = IN_A_ROUND;
+
+          // we want to hand back the loop to the round
+          round();
+        break;
+      }
+    } break;
     default:
       game();
       break;
