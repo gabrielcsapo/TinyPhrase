@@ -205,7 +205,8 @@ void game() {
         break;
         case BUTTON_LEFT:
           // We are cycling through menu options
-          if(lastMenuOption + 1 > totalMenuOptions) {
+          Serial.println(lastMenuOption, totalMenuOptions);
+          if(lastMenuOption + 1 == totalMenuOptions) {
             lastMenuOption = 0;
           } else {
             lastMenuOption += 1;
@@ -213,6 +214,7 @@ void game() {
           MenuOption selectedMenuOptionNested = MenuOptions[lastMenuOption];
 
           printCenteredText(selectedMenuOptionNested.menuItemName);
+          tickingSound();
         break;
       }
     }break;
@@ -246,13 +248,11 @@ void game() {
 void loop() {
   switch(gameState) {
     case IN_A_ROUND:
-      Serial.println("I am dealing with the game in a different loop");
       break;
     case PAUSED:
       Serial.println("PAUSED");
       break;
     default:
-      Serial.println("calling game()");
       game();
       break;
   }
