@@ -260,7 +260,7 @@ void loop() {
     case PAUSED: {
       Serial.println("PAUSED");
 
-      printCenteredText("PAUSED\nPress the right button to continue");
+      printCenteredText("PAUSED\nPress the right button to continue. Press the left button to end the game.");
 
       switch(getButton()) {
         case BUTTON_RIGHT:
@@ -269,6 +269,16 @@ void loop() {
 
           // we want to hand back the loop to the round
           round();
+        break;
+        case BUTTON_LEFT:
+          gameState = MAIN_MENU;
+
+          // reset the game state
+          lastMenuOption=0;
+          lastGameOption=0;
+          timeSinceLastTick=0;
+          lastPress=0;
+          timeSinceGameStarted=0;
         break;
       }
     } break;

@@ -1,2 +1,3 @@
 # TinyPhrase
-A game where you guess the phrase!
+
+> A game where you have others guess the phrase!
