@@ -14,6 +14,13 @@ let optionsParsed = 0;
 
 promptFiles = promptFiles.slice(0, 5)
 
+const toTitleCase = (str) => {
+  return str.replace(/_/g, ' ').replace(
+    /\w\S*/g,
+    (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+  );
+}
+
 promptFiles.forEach((promptFile, index) => {
   const content = fs.readFileSync(path.resolve(promptDir, promptFile), "utf8");
   const listOfOptions = content
@@ -29,7 +36,7 @@ promptFiles.forEach((promptFile, index) => {
     largestOptionsParsedPromptName = promptFile.replace('.txt', '');
   }
   optionsParsed += listOfOptions.length;
-  menuOptionsTxt.push(`\t{${index}, "${promptFile.replace(".txt", "")}", {${listOfOptions
+  menuOptionsTxt.push(`\t{${index}, "${toTitleCase(promptFile.replace(".txt", ""))}", {${listOfOptions
     .map((option) => `"${option}"`)
     .join(",")}}, {${listOfOptions.length}}},`);
 });
