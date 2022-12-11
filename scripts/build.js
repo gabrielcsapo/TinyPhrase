@@ -34,6 +34,8 @@ promptFiles.forEach((promptFile, index) => {
     .join(",")}}, {${listOfOptions.length}}},`);
 });
 
+menuOptionsTxt.push(`\t{${promptFiles.length + 1}, "All of the Above", {}, {}},`);
+
 menuOptionsTxt.push("};");
 
 console.log(menuOptionsTxt.join('\n'));
