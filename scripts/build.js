@@ -3,14 +3,16 @@ const path = require("path");
 
 const promptDir = path.resolve(__dirname, "..", "prompts");
 
-const promptFiles = fs.readdirSync(promptDir);
+let promptFiles = fs.readdirSync(promptDir);
 
-let menuOptionsTxt = ["const MenuOption MenuOptions[] {"];
+let menuOptionsTxt = ["const MenuOption MenuOptions[] PROGMEM {"];
 
 let largestOptionsParsed = 0;
 let largestOptionsParsedPromptName = '';
 let largestOptionLength = 0;
 let optionsParsed = 0;
+
+promptFiles = promptFiles.slice(0, 5)
 
 promptFiles.forEach((promptFile, index) => {
   const content = fs.readFileSync(path.resolve(promptDir, promptFile), "utf8");
@@ -29,7 +31,7 @@ promptFiles.forEach((promptFile, index) => {
   optionsParsed += listOfOptions.length;
   menuOptionsTxt.push(`\t{${index}, "${promptFile.replace(".txt", "")}", {${listOfOptions
     .map((option) => `"${option}"`)
-    .join(",")}}},`);
+    .join(",")}}, {${listOfOptions.length}}},`);
 });
 
 menuOptionsTxt.push("};");
